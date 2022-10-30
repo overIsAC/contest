@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+using namespace std;
+using LL = long long;
+using PII = pair<int, int>;
+
+#define lson (k << 1)
+#define rson (k << 1 | 1)
+
+const int mod = 7 + 1e9;
+// const int mod = 998244353;
+const int N = 3 + 1e5;
+
+int main() {
+    int a, b, c, d, x;
+    cin >> a >> b >> c >> d >> x;
+    cout << max(0, x - a) << ' ';
+    cout << max(0, x - b) << ' ';
+    cout << max(0, x - c) << ' ';
+    cout << max(0, x - d) << ' ';
+    return 0;
+}
