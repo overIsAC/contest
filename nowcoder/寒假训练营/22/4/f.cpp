@@ -17,18 +17,24 @@ const int mod = 7 + 1e9;
 // const int mod = 998244353;
 const int N = 3 + 1e5;
 
+map<char, char> mp = {{'C', '1'}, {'D', '2'}, {'E', '3'}, {'F', '4'},
+                      {'G', '5'}, {'A', '6'}, {'B', '7'}};
+
 int main() {
-    LL x, a, b;
     string s;
-    LL ans = 0;
-    cin >> x >> a >> b;
     cin >> s;
+    int v = 0;
+    string ans;
     for (auto &i : s) {
-        if (i == '1' && x >= a) {
-            x -= a;
-            ++ans;
+        if (i == '<') {
+            --v;
+        } else if (i == '>') {
+            ++v;
         } else {
-            x += b;
+            ans += mp[i];
+            if (v) {
+                ans += string(abs(v), v < 0 ? '.' : '*');
+            }
         }
     }
     cout << ans << endl;

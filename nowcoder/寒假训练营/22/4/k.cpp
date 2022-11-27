@@ -15,22 +15,11 @@ using PII = pair<int, int>;
 
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 1e5;
+const int N = 3 + 2e5;
 
 int main() {
-    LL x, a, b;
-    string s;
-    LL ans = 0;
-    cin >> x >> a >> b;
-    cin >> s;
-    for (auto &i : s) {
-        if (i == '1' && x >= a) {
-            x -= a;
-            ++ans;
-        } else {
-            x += b;
-        }
-    }
-    cout << ans << endl;
+    LL x;
+    cin >> x;
+    cout << x * (1 << 30) + x << endl;
     return 0;
 }

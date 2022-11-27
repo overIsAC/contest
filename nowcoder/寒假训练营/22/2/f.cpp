@@ -15,28 +15,59 @@ using PII = pair<int, int>;
 
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 1e5;
+const int N = 3 + 1e6;
 
-map<char, char> mp = {{'C', '1'}, {'D', '2'}, {'E', '3'}, {'F', '4'},
-                      {'G', '5'}, {'A', '6'}, {'B', '7'}};
+int n, q;
+char s[N];
+int a[N];
+
+int id[N];
+LL c[N];
+
+LL qpow(LL q, LL n) {
+    LL ans = 1;
+    while (n) {
+        if (n & 1) ans = ans * q % mod;
+        n >>= 1;
+        q = q * q % mod;
+    }
+    return ans;
+}
 
 int main() {
-    string s;
-    cin >> s;
-    int v = 0;
-    string ans;
-    for (auto &i : s) {
-        if (i == '<') {
-            --v;
-        } else if (i == '>') {
-            ++v;
-        } else {
-            ans += mp[i];
-            if (v) {
-                ans += string(abs(v), v < 0 ? '.' : '*');
-            }
-        }
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> q;
+    cin >> s + 1;
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
     }
-    cout << ans << endl;
+    int t = 1;
+    c[1] = a[1];
+    id[1] = 1;
+    for (int i = 1; i < n; ++i) {
+        if (s[i] == '+') {
+            c[++t] = a[i + 1];
+        } else {
+            c[t] = c[t] * a[i + 1] % mod;
+        }
+        id[i + 1] = t;
+    }
+    LL sum = 0;
+    for (int i = 1; i <= t; ++i) {
+        sum = (sum + c[i]) % mod;
+    }
+    while (q--) {
+        int x, y;
+        cin >> x >> y;
+        int p = id[x];
+        sum -= c[p];
+        c[p] = c[p] * qpow(a[x], mod - 2) % mod;
+        a[x] = y;
+        c[p] = c[p] * y % mod;
+        sum += c[p];
+        sum = (sum % mod + mod) % mod;
+        cout << sum << endl;
+    }
     return 0;
 }

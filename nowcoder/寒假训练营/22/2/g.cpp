@@ -15,31 +15,84 @@ using PII = pair<int, int>;
 
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 2e5;
+const int N = 3 + 1e6;
 
-int n, a[N];
+int n, m;
+int f[N][20];
+int d[N];
+vector<int> edge[N];
+int a[N];
 
-LL qpow(LL q, LL n, LL mod) {
-    LL ans = 1;
-    while (n) {
-        if (n & 1) ans = ans * q % mod;
-        n >>= 1;
-        q = q * q % mod;
+LL o[N][2];
+
+void dfs(int x, int fa) {
+    d[x] = d[fa] + 1;
+    for (int &y : edge[x]) {
+        if (y == fa) {
+            continue;
+        }
+        f[y][0] = x;
+        for (int i = 1; i < 20; ++i) {
+            f[y][i] = f[f[y][i - 1]][i - 1];
+        }
+        o[y][0] += o[x][0];
+        if (a[y] > a[x]) {
+            o[y][0] += a[y] - a[x];
+        }
+        o[y][1] += o[x][1];
+        if (a[x] > a[y]) {
+            o[y][1] += a[x] - a[y];
+        }
+        dfs(y, x);
     }
-    return ans;
+}
+
+int lca(int x, int y) {
+    if (d[x] > d[y]) {
+        swap(x, y);
+    }
+    for (int i = 19; i >= 0; --i) {
+        if (d[x] <= d[f[y][i]]) {
+            y = f[y][i];
+        }
+    }
+    if (x == y) {
+        return x;
+    }
+    for (int i = 19; i >= 0; --i) {
+        if (f[x][i] != f[y][i]) {
+            x = f[x][i];
+            y = f[y][i];
+        }
+    }
+    return f[x][0];
 }
 
 int main() {
-    cin >> n;
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> m;
     for (int i = 1; i <= n; ++i) {
         cin >> a[i];
     }
-    sort(a + 1, a + n + 1);
-    LL ans = 1, pre = 1;
-    for (int i = 1; i <= n; ++i) {
-        ans = ans * pre % mod * a[i] % mod * qpow(a[i], qpow(2, i - 1, mod - 1), mod) % mod;
-        pre = pre * pre % mod * a[i] % mod;
+    for (int i= 1; i < n; ++i) {
+        int u, v;
+        cin >> u >> v;
+        edge[u].push_back(v);
+        edge[v].push_back(u);
     }
-    cout << ans << endl;
+    dfs(1, 0);
+    // for (int i= 1; i <= n; ++i) {
+    //     for (int j= i ; j <= n; ++j) {
+    //         cout << i << " " << j << " " << lca(i, j) << endl;
+    //     }
+    // }
+
+    while (m--) {
+        int x, y;
+        cin >> x >> y;
+        int g = lca(x, y);
+        cout << a[x] + o[x][1] - o[g][1] + o[y][0] - o[g][0] << endl;
+    }
     return 0;
 }

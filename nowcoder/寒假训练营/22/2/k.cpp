@@ -15,11 +15,23 @@ using PII = pair<int, int>;
 
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 2e5;
+const int N = 3 + 1e5;
+
+int cnt[222];
 
 int main() {
-    LL x;
-    cin >> x;
-    cout << x * (1 << 30) + x << endl;
+    string s;
+    cin >> s;
+    for (auto &i : s) {
+        i -= '0';
+        if (i == 5) {
+        } else {
+            ++cnt[5];
+            ++cnt[i];
+        }
+    }
+    for (int i = 1; i <= 9; ++i) {
+        cout << cnt[i] << ' ';
+    }
     return 0;
 }
