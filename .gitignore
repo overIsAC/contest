@@ -3,4 +3,6 @@
 *.in
 *.out
 *main.cpp
+*main.py
+*main.java
 *.txt
