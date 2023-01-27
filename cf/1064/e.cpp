@@ -29,12 +29,12 @@ int main() {
         return s;
     };
 
-    string col = qry(0, 0);
+    string col = qry(1, 0);
     int l = 1, r = 1e9;
     int p = 1;
     while (l <= r && p < n) {
         int mid = l + r >> 1;
-        string now = qry(p++, mid);
+        string now = qry(++p, mid);
         if (now == col) {
             l = mid + 1;
         } else {
@@ -42,7 +42,8 @@ int main() {
         }
     }
 
-    cout << p << ' ' << r << ' ' << 0 << ' ' << r << endl;
+
+    cout << 100 << ' ' << l << ' ' << 0 << ' ' << r << endl;
 
     return 0;
 }
