@@ -26,27 +26,21 @@ void bfs(int x) {
         return;
     }
     queue<int> q;
-    map<int, int> d;
-    d[x] = 0;
     q.push(x);
+    ti[x] = 0;
     while (q.size()) {
         int x = q.front();
         q.pop();
         for (auto &y : edge[x]) {
-            if (d.count(y)) {
-                continue;
-            }
-            if (color[y]) {
-                now = min(now, d[x] + 1);
-                return;
-            }
-            d[y] = d[x] + 1;
-            if (ti[y] <= d[y]) {
-                continue;
-            }
-            ti[y] = d[y];
-            if (d[y] + 1 < now) {
-                q.push(y);
+            if (ti[y] > ti[x] + 1) {
+                ti[y] = ti[x] + 1;
+                if (ti[y] + 1 < now) {
+                    q.push(y);
+                }
+                if (color[y]) {
+                    now = min(now, ti[x] + 1);
+                    return;
+                }
             }
         }
     }
