@@ -52,7 +52,7 @@ struct Tree {
     }
     void build(int k, int l, int r, int v) {
         if (l == r) {
-            node[k] = {l, r, a[r] > v, -1}; 
+            node[k] = {l, r, a[r] > v, -1};
             return;
         }
         int mid = l + r >> 1;
@@ -98,7 +98,7 @@ bool ok(int v) {
     for (int i = 1; i <= m; ++i) {
         int y = tr.query(1, b[i].l, b[i].r).v;
         int x = b[i].r - b[i].l + 1 - y;
-        if (b[i].op) {
+        if (b[i].op == 0) {
             if (x) {
                 tr.update(1, b[i].l, b[i].l + x - 1, 0);
             }
