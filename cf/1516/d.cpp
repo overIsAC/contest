@@ -17,8 +17,10 @@ const int N = 3 + 2e5;
 
 int n, a[N], q;
 int tr[N];
-int cnt[N];
 int ans[N];
+vector<int> last[N];
+vector<int> ve[N];
+int vis[N];
 
 struct Query {
     int l, r, id;
@@ -52,25 +54,40 @@ int main() {
     }
     sort(query + 1, query + q + 1);
 
-    auto insert = [&](int v) {
-        for (int i = 1; i * i <= v; ++i) {
-            if (v % i == 0) {
-                if (cnt[i]) {
-                    add(tr, cnt[i], -1);
-                    cnt[i] = 0;
-                }
-                if (i * i != v) {
-                    if (cnt[v / i]) {
-                        add(tr, cnt[v / i], -1);
-                        cnt[v / i] = 0;
-                    }
-                }
-            }
+    for (int i = 1; i <= n; ++i) {
+        ve[a[i]].push_back(i);
+    }
+    for (int i = 2; i <= 1e5; ++i) {
+        for (int j = i + i; j <= 1e5; j += i) {
+            ve[i].insert(ve[i].begin(), ve[j].begin(), ve[j].end());
         }
-    };
+        sort(ve[i].begin(), ve[i].end());
+    }
+
+    for (int i = 2; i <= 1e5; ++i) {
+        for (int j = 1; j < ve[i].size(); ++j) {
+            last[ve[i][j]].push_back(ve[i][j - 1]);
+        }
+    }
 
     int p = 1;
 
-   
+    for (int i = 1; i <= q; ++i) {
+        while (p <= query[i].r) {
+            for (auto &j : last[p]) {
+                if (!vis[j]) {
+                    add(tr, j, -1);
+                    vis[j] = 1;
+                }
+            }
+            add(tr, p, 1);
+            ++p;
+        }
+        ans[query[i].id] = max(query[i].r - query[i].l + 1 - (ask(tr, query[i].r) - ask(tr, query[i].l - 1)), 1);
+    }
+    for (int i = 1; i <= q; ++i) {
+        cout << ans[i] << endl;
+    }
+
     return 0;
 }

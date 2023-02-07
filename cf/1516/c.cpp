@@ -18,19 +18,37 @@ const int N = 3 + 2e5;
 int n, a[N];
 int dp[N];
 
+int get(int x) {
+    int ans = 1;
+    while (x % 2 == 0) {
+        ans *= 2;
+        x /= 2;
+    }
+    return ans;
+}
+
 int main() {
     cin >> n;
     for (int i = 1; i <= n; ++i) {
         cin >> a[i];
     }
-    int sum = 0;
+    int mn = 1e9;
+    for (int i = 1; i <= n; ++i) {
+        mn = min(get(a[i]), mn);
+    }
+
+    for (int i = 1; i <= n; ++i) {
+        a[i] /= mn;
+    }
+
+    int sum = 0, p = 0;
     for (int i = 1; i <= n; ++i) {
         sum += a[i];
+        if (a[i] & 1) {
+            p = i;
+        }
     }
-    if (sum & 1) {
-        cout << 0 << endl;
-        return;
-    }
+
     dp[0] = 1;
     for (int i = 1; i <= n; ++i) {
         for (int j = sum; j >= a[i]; --j) {
@@ -39,13 +57,11 @@ int main() {
             }
         }
     }
-    for (int i = 1; i <= n; ++i) {
-        if (a[i] % 2) {
-        } else {
-            if (!dp[(sum - a[i]) / 2]) {
-                ok = true;
-            }
-        }
+    if (sum % 2 || !dp[sum / 2]) {
+        cout << 0 << endl;
+    } else {
+        cout << 1 << endl;
+        cout << p << endl;
     }
     return 0;
 }
