@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
 using LL = long long;
 using PII = pair<int, int>;
 
@@ -17,9 +16,9 @@ using PII = pair<int, int>;
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
 const int N = 3 + 1e5;
+const double eps = 1e-6;
 
 int n;
-LL pre[N], suf[N];
 PII a[N];
 
 signed main() {
@@ -33,50 +32,24 @@ signed main() {
         }
         for (int i = 1; i <= n; ++i) {
             cin >> a[i].second;
-            m[a[i].first] = max(m[a[i].first], a[i].second);
         }
-        n = 0;
-        for (auto &i : m) {
-            a[++n] = i;
-        }
-        pre[1] = a[1].second;
-        for (int i = 2; i <= n; ++i) {
-            pre[i] = max((LL)a[i].second,
-                         pre[i - 1] + (a[i].first - a[i - 1].first));
-        }
-        suf[n] = a[n].second;
-        for (int i = n - 1; i; --i) {
-            suf[i] = max((LL)a[i].second,
-                         suf[i + 1] + (a[i + 1].first - a[i].first));
-        }
-        long double p = a[1].first;
-        long double ans = suf[1];
-        if (ans > pre[n]) {
-            p = a[n].first;
-            ans = pre[n];
-        }
-        for (int i = 2; i <= n; ++i) {
-            if (a[i].first == a[i - 1].first) continue;
-            long double dist = a[i].first - a[i - 1].first;
-            dist -= abs(pre[i - 1] - suf[i]);
-            if (dist < 0) {
-                continue;
+        double l = 0, r = 1e9;
+        double p = 0;
+        auto ok = [&](double v) {
+            double L = -2e9, R = 2e9;
+            for (int i = 1; i <= n; ++i) {
+                L = max(min<double>(a[i].first, a[i].first - (v - a[i].second)), L);
+                R = min(max<double>(a[i].first, a[i].first + (v - a[i].second)), R);
             }
-            long double u = a[i - 1].first, v = a[i].first;
-            if (pre[i - 1] < suf[i]) {
-                u += suf[i] - pre[i - 1];
+            p = L;
+            return L <= R;
+        };
+        while (r - l > eps) {
+            double mid = (l + r) / 2;
+            if (ok(mid)) {
+                r = mid;
             } else {
-                v -= pre[i - 1] - suf[i];
-            }
-            if (ans > max(pre[i - 1], suf[i]) + dist / 2) {
-                ans = max(pre[i - 1], suf[i]) + dist / 2;
-                p = (u + v) / 2;
-            }
-        }
-        for (int i = 2; i < n; ++i) {
-            if (ans > max(pre[i], suf[i])) {
-                ans = max(pre[i], suf[i]);
-                p = i;
+                l = mid;
             }
         }
         cout << fixed << setprecision(10) << p << endl;
