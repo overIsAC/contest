@@ -25,11 +25,11 @@ vector<LL> merge(const vector<LL>& a, const vector<LL>& u, const vector<LL>& v) 
     vector<LL> ans(6);
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 6; ++j) {
-            if ((i - j + 6) % 6 % 3 == 0) {
+            if ((i - j + 6) % 3 == 0) {
                 continue;
             }
             for (int k = 0; k < 6; ++k) {
-                if ((i - k + 6) % 6 % 3 == 0) {
+                if ((i - k + 6) % 3 == 0) {
                     continue;
                 }
                 ans[i] = (ans[i] + u[j] * v[k]) % mod;
@@ -52,10 +52,10 @@ int bin(LL v) {
 int main() {
     map<string, int> mp;
     mp["white"] = 0;
-    mp["yellow"] = 1;
-    mp["green"] = 2;
-    mp["blue"] = 3;
-    mp["red"] = 4;
+    mp["blue"] = 1;
+    mp["red"] = 2;
+    mp["yellow"] = 3;
+    mp["green"] = 4;
     mp["orange"] = 5;
 
     dp[1] = {1, 1, 1, 1, 1, 1};
@@ -79,9 +79,8 @@ int main() {
     }
 
     for (auto i : st) {
-        while (i) {
-            i /= 2;
-            if (i == 0 || m1.count(i)) {
+        while (i /= 2) {
+            if (m1.count(i)) {
                 break;
             }
             m1[i] = {1, 1, 1, 1, 1, 1};
@@ -94,6 +93,8 @@ int main() {
         auto& vv = m2[first];
         int bb = bin(first);
         vector<LL> res;
+
+        db(first);
 
         if (bb == k) {
             res = it->second;

@@ -20,6 +20,7 @@ const int mod = 7 + 1e9;
 const int N = 3 + 2e5;
 
 int n, a[N], b[N];
+LL pre[N], suf[N];
 
 int main() {
     int T;
@@ -32,20 +33,18 @@ int main() {
         for (int i = 1; i <= n; ++i) {
             cin >> b[i];
         }
-        LL ans = 0;
+        LL ans = 1e18, temp = 0;
+
         for (int i = 1; i <= n; ++i) {
-            ans += a[i];
-            if (1 < i && i < n) {
-                ans += b[i];
-            }
-            ans += b[i];
+            temp += a[i];
+            pre[i] = pre[i - 1] + b[i];
         }
-        int mx = 0;
+        suf[n + 1] = 0;
+        for (int i = n; i >= 1; --i) {
+            suf[i] = suf[i + 1] + b[i];
+        }
         for (int i = 1; i <= n; ++i) {
-            if (mx < b[i]) {
-                ans -= b[i] - mx;
-                mx = b[i];
-            }
+            ans = min(ans, pre[i - 1] + suf[i + 1] + temp);
         }
 
         cout << ans << endl;
