@@ -15,43 +15,52 @@ const int mod = 7 + 1e9;
 // const int mod = 998244353;
 const int N = 3 + 1e5;
 
+int n, t[N], x[N];
+
 int main() {
     int T;
     cin >> T;
     while (T--) {
-        int n;
         cin >> n;
-        vector<int> a(n);
-        for (auto &i : a) {
-            cin >> i;
+        for (int i = 1; i <= n; ++i) {
+            cin >> t[i] >> x[i];
         }
-        LL u = 0, v = 0;
-        for (int i = 0; i < n; ++i) {
-            if (i & 1) {
-                u += a[i];
-            } else {
-                v += a[i];
+        int p = 0, sp = 0, ed = 0;
+        int ans = 0;
+        int last = -2e9;
+        auto in = [&](int l, int r, int v) {
+            if (l > r) {
+                swap(l, r);
             }
-        }
-        if (u > v) {
-            for (int i = 0; i < n; ++i) {
-                if (i & 1) {
-                } else {
-                    a[i] = 1;
+            return l <= v && v <= r;
+        };
+        for (int i = 1; i <= n; ++i) {
+            int dt = min(abs(ed - p), t[i] - t[i - 1]);
+            if (in(p, p + sp * dt, last)) {
+                ++ans;
+            }
+            p += sp * dt;
+            if (p == ed) {
+                sp = 0;
+            }
+            if (sp == 0) {
+                if (p != x[i]) {
+                    ed = x[i];
+                    if (p < x[i]) {
+                        sp = 1;
+                    } else {
+                        sp = -1;
+                    }
                 }
             }
-        } else {
-            for (int i = 0; i < n; ++i) {
-                if (i & 1) {
-                    a[i] = 1;
-                } else {
-                }
-            }
+            last = x[i];
+            // cout << p << ' ' << sp << ' ' << ans << endl;
         }
-        for (int i = 0; i < n; ++i) {
-            cout << a[i] << ' ';
+        // cout << p << ' ' << p + sp * abs(ed - p) << endl;
+        if (in(p, p + sp * abs(ed - p), last)) {
+            ++ans;
         }
-        cout << endl;
+        cout << ans << endl;
     }
     return 0;
 }
