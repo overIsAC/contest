@@ -27,13 +27,13 @@ int main() {
     int T;
     cin >> T;
     while (T--) {
-        int v;
+        int v, ps = 1, pt = 2;
         cin >> n;
         cout << "+ " << n + 1 << endl;
         cin >> v;
+        int d = query(ps, pt);
         cout << "+ " << n + 2 << endl;
         cin >> v;
-        int ps = 1, pt = 2;
         int dif = query(ps, pt);
         vector<vector<int>> a, b, c;
         for (int i = 3; i <= n; ++i) {
