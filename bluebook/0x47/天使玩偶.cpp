@@ -18,6 +18,26 @@ void cdq(int l, int r) {
     cdq(l, mid);
     cdq(mid + 1, r);
 
+    {
+        int u = l, v = mid + 1, w = l;
+        while (u <= mid && v <= r) {
+            if (x[p[u]] < x[p[v]]) {
+                q[w++] = p[u++];
+            } else {
+                q[w++] = p[v++];
+            }
+        }
+        while (u <= mid) {
+            q[w++] = p[u++];
+        }
+        while (v <= r) {
+            q[w++] = p[v++];
+        }
+        for (int i = l; i <= r; ++i) {
+            p[i] = q[i];
+        }
+    }
+
     for (int i = l; i <= mid; ++i) {
         int id = p[i];
         if (o[id]) {
@@ -68,26 +88,6 @@ void cdq(int l, int r) {
             for (int j = y[id] + 1; j >= 1; j -= j & -j) {
                 tr[j] = 1e9;
             }
-        }
-    }
-
-    {
-        int u = l, v = mid + 1, w = l;
-        while (u <= mid && v <= r) {
-            if (x[p[u]] < x[p[v]]) {
-                q[w++] = p[u++];
-            } else {
-                q[w++] = p[v++];
-            }
-        }
-        while (u <= mid) {
-            q[w++] = p[u++];
-        }
-        while (v <= r) {
-            q[w++] = p[v++];
-        }
-        for (int i = l; i <= r; ++i) {
-            p[i] = q[i];
         }
     }
 }

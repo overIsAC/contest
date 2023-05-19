@@ -7,74 +7,61 @@ using PII = pair<int, int>;
 #define rson (k << 1 | 1)
 #if LEMON
 #define db(x) cout << "function " << __FUNCTION__ << ", line " << __LINE__ << " : " << #x << " " << x << endl;
+#define dbf(func) func();
 #else
 #define db(x)
+#define dbf(func)
 #endif
 
+const int dx[] = {1, -1, 0, 0};
+const int dy[] = {0, 0, 1, -1};
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 44;
+const int N = 3 + 2e5;
 
 int n, m;
-int a[N], b[N];
-vector<int> edge[N];
-int id[44];
-int t;
-int dp[N][1 << 18];
+char s[N];
+int nxt[N][26];
+int f[N][20];
 
 int main() {
-    cin >> n >> m;
-    memset(id, -1, sizeof(id));
-    for (int i = 1; i <= n; ++i) {
-        cin >> b[i];
-        if (id[b[i]] == -1) {
-            id[b[i]] = 0;
-        } else {
-            if (!id[b[i]]) {
-                id[b[i]] = ++t;
-            }
-        }
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> m >> n;
+    cin >> s + 1;
+    for (int i = 0; i < m; ++i) {
+        nxt[n + 1][i] = n + 1;
     }
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
+    for (int i = n; i >= 1; --i) {
+        for (int j = 0; j < m; ++j) {
+            nxt[i][j] = nxt[i + 1][j];
+        }
+        nxt[i][s[i] - 'a'] = i;
+    }
+    for (int i = n + 1; i >= 1; --i) {
+        int c = 0;
+        for (int j = 0; j < m; ++j) {
+            c = max(c, nxt[i][j]);
+        }
+        f[i][0] = c;
+        for (int j = 1; j < 20; ++j) {
+            f[i][j] = f[min(f[i][j - 1] + 1, n + 1)][j - 1];
+        }
     }
 
-    for (int i = 1; i <= n; ++i) {
-        id[i] -= 1;
-    }
-    while (m--) {
-        int u, v;
-        cin >> u >> v;
-        edge[u].push_back(v);
-    }
-    memset(dp, -0x3f, sizeof(dp));
-    if (id[b[1]] != -1) {
-        dp[1][1 << id[b[1]]] = a[b[1]];
-    } else {
-        dp[1][0] = a[b[1]];
-    }
-    for (int x = 1; x <= n; ++x) {
+    int q;
+    cin >> q;
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
         int ans = 0;
-        for (int i = 0; i < 1 << t; ++i) {
-            if (dp[x][i] < 0) {
-                continue;
-            }
-            ans = max(ans, dp[x][i]);
-            for (int &y : edge[x]) {
-                int p = b[y];
-                if (id[p] != -1) {
-                    int w = id[p];
-                    if (i >> w & 1) {
-                        dp[y][i] = max(dp[y][i], dp[x][i]);
-                    } else {
-                        dp[y][i | 1 << w] = max(dp[y][i | 1 << w], dp[x][i] + a[p]);
-                    }
-                } else {
-                    dp[y][i] = max(dp[y][i], dp[x][i] + a[p]);
-                }
+        for (int i = 19; i >= 0 && l <= r; --i) {
+            if (f[l][i] <= r) {
+                l = f[l][i] + 1;
+                ans += 1 << i;
             }
         }
-        cout << ans << endl;
+        cout << ans + 1 << '\n';
     }
     return 0;
 }
