@@ -20,42 +20,60 @@ const int mod = 7 + 1e9;
 const int N = 3 + 3e5;
 
 int n, a[N], k;
+int pre[N];
+int b[N], t, cnt[N];
 
 int ok(LL o) {
-    multiset<int> u, v, w;
+    for (int i = 1; i <= t; ++i) {
+        cnt[i] = 0;
+    }
+    priority_queue<int> q;
+    int sz = 0;
     LL sum = 0;
     for (int i = 1; i <= n; ++i) {
-        sum += a[i];
-        u.insert(a[i]);
+        int &p = a[i];
+        sum += b[p];
+        q.push(p);
+        ++cnt[p];
+        ++sz;
         while (sum > o) {
-            v.insert(*u.rbegin());
-            sum -= *u.rbegin();
-            u.erase(--u.end());
+            int x = q.top();
+            q.pop();
+            if (!cnt[x]) {
+                continue;
+            }
+            --sz;
+            --cnt[x];
+            sum -= b[x];
+        }
+        pre[i] = sz;
+        if (sz >= k) {
+            return 1;
         }
     }
-    if (sum <= o && u.size() >= k) {
-        return 1;
+    for (int i = 1; i <= t; ++i) {
+        cnt[i] = 0;
     }
-    LL cnt = 0;
-    for (int i = 1; i <= n; ++i) {
-        cnt += a[i];
-        w.insert(a[i]);
-        while (cnt > o) {
-            cnt -= *w.rbegin();
-            w.erase(--w.end());
+    q = priority_queue<int>();
+    sz = 0;
+    sum = 0;
+    for (int i = n; i >= 1; --i) {
+        int &p = a[i];
+        sum += b[p];
+        q.push(p);
+        ++cnt[p];
+        ++sz;
+        while (sum > o) {
+            int x = q.top();
+            q.pop();
+            if (!cnt[x]) {
+                continue;
+            }
+            --sz;
+            --cnt[x];
+            sum -= b[x];
         }
-        if (v.size() && v.find(a[i]) != v.end()) {
-            v.erase(v.find(a[i]));
-        } else {
-            u.erase(u.find(a[i]));
-            sum -= a[i];
-        }
-        while (v.size() && sum + *v.begin() <= o) {
-            sum += *v.begin();
-            u.insert(*v.begin());
-            v.erase(v.begin());
-        }
-        if (u.size() + w.size() >= k) {
+        if (sz + pre[i - 1] >= k) {
             return 1;
         }
     }
@@ -71,8 +89,14 @@ int main() {
         cin >> n >> k;
         for (int i = 1; i <= n; ++i) {
             cin >> a[i];
+            b[i] = a[i];
         }
         LL L = *min_element(a + 1, a + n + 1), R = accumulate(a + 1, a + n + 1, 0LL);
+        sort(b + 1, b + n + 1);
+        t = unique(b + 1, b + n + 1) - b - 1;
+        for (int i = 1; i <= n; ++i) {
+            a[i] = lower_bound(b + 1, b + t + 1, a[i]) - b;
+        }
         while (L < R) {
             LL mid = (L + R) / 2;
             if (ok(mid)) {
