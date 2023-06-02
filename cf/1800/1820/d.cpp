@@ -35,24 +35,26 @@ int main() {
         }
         int maxa = *max_element(a + 1, a + n + 1);
         int maxb = *max_element(b + 1, b + n + 1);
-        set<PII> ans;
+        set<pair<LL, LL>> ans;
 
         map<int, multiset<int>> mpa;
         map<int, multiset<int>> mpb;
 
         auto erase = [&](int u, int v) -> bool {
-            if (!mpa.count(u) || mpa[u].find(v) == mpa[u].end()) {
-                return false;
+            if (!mpa.count(u) || !mpb.count(v)) {
+                return 0;
             }
-            if (!mpb.count(v) || mpb[v].find(u) == mpb[v].end()) {
-                return false;
+            auto& ma = mpa[u];
+            auto& mb = mpb[v];
+            if (ma.find(v) == ma.end() || mb.find(u) == mb.end()) {
+                return 0;
             }
-            mpa[u].erase(mpa[u].find(v));
-            if (mpa[u].empty()) {
+            ma.erase(ma.find(v));
+            if (ma.empty()) {
                 mpa.erase(u);
             }
-            mpb[v].erase(mpb[v].find(u));
-            if (mpb[v].empty()) {
+            mb.erase(mb.find(u));
+            if (mb.empty()) {
                 mpb.erase(v);
             }
             return 1;
@@ -77,7 +79,7 @@ int main() {
                 y = p->first;
                 x = *(p->second.rbegin());
                 if (x == lena || y == lenb) {
-                    if (erase(x, y)) {
+                    if (!erase(x, y)) {
                         return 0;
                     }
                     if (lena == x) {
@@ -96,25 +98,18 @@ int main() {
             mpa[a[i]].insert(b[i]);
             mpb[b[i]].insert(a[i]);
         }
-        int t = *mpa[maxa].rbegin();
-        if (t >= maxb && t <= sum / maxa) {
-            erase(maxa, t);
-            if (check(maxa, sum / maxa - t)) {
-                ans.insert({maxa, sum / maxa});
-            }
-            mpa.clear();
-            mpb.clear();
-            for (int i = 1; i <= n; ++i) {
-                mpa[a[i]].insert(b[i]);
-                mpb[b[i]].insert(a[i]);
-            }
+        if (sum % maxa == 0 && check(maxa, sum / maxa)) {
+            ans.insert({maxa, sum / maxa});
         }
-        t = *mpb[maxb].rbegin();
-        if (t >= maxa && t <= sum / maxb) {
-            erase(t, maxb);
-            if (check(sum / maxb - t, maxb)) {
-                ans.insert({sum / maxb, maxb});
-            }
+        mpa.clear();
+        mpb.clear();
+        for (int i = 1; i <= n; ++i) {
+            mpa[a[i]].insert(b[i]);
+            mpb[b[i]].insert(a[i]);
+        }
+
+        if (sum % maxb == 0 && check(sum / maxb, maxb)) {
+            ans.insert({sum / maxb, maxb});
         }
         cout << ans.size() << endl;
         for (auto& i : ans) {
