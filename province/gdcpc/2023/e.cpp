@@ -35,20 +35,24 @@ int main() {
                 cnt[p] += 1;
             }
         }
+        cnt[0] = n;
 
         ans.clear();
         int rt = 0;
         while (k > 0) {
+            int temp = cnt[rt];
             for (int i = 0; i < 26; ++i) {
                 if (!tr[rt][i]) {
                     continue;
                 }
+                temp -= cnt[tr[rt][i]];
                 --k;
                 if (!k) {
                     break;
                 }
             }
-            if (!k) {
+            k -= temp;
+            if (k <= 0) {
                 break;
             }
             int p = -1;
@@ -59,16 +63,16 @@ int main() {
                 k -= cnt[tr[rt][i]] - 1;
                 p = i;
                 if (k <= 0) {
-                    k = 0;
                     break;
                 }
             }
             if (p == -1) {
                 break;
             }
-            k += cnt[tr[rt][p]] + 1;
-            ans += p + 'a';
+            k += cnt[tr[rt][p]];
             rt = tr[rt][p];
+            ans += p + 'a';
+            // cout << k << ' ' << ans << endl;
         }
         if (ans.empty()) {
             ans = "EMPTY";
@@ -78,3 +82,10 @@ int main() {
 
     return 0;
 }
+/*
+
+3 2
+pppp
+ppp
+pppppppppppppppp
+*/
