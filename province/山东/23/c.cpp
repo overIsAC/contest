@@ -12,45 +12,44 @@ map<int, int> mp[N];
 int key[N];
 char ans[N];
 int d[N];
+int rk[N];
+vector<int> seq[N];
 
 void dfs(int x) {
-    if (key[x]) {
-        mp[x][d[x]] += 1;
-    }
-    vector<int> seq;
+    seq[d[x]].push_back(x);
     for (auto &y : edge[x]) {
         d[y] = d[x] + 1;
         dfs(y);
-        seq.push_back(y);
     }
-    sort(seq.begin(), seq.end(), [&](int &x, int &y) {
-        auto it1 = mp[x].begin(), it2 = mp[y].begin();
-        int p = 1e9;
-        while (it1 != mp[x].end() && it2 != mp[y].end()) {
-            if (*it1 != *it2) {
-                if (it1->first != it2->first) {
-                    return it1->first < it2->first;
-                } else {
-                    if 9
-                }
-            }
-            ++it1;
-            ++it2;
+}
+
+int cmp(int x, int y) {
+    if (key[x] != key[y]) {
+        return key[x] > key[y] ? -1 : 1;
+    }
+    int flag = 0;
+    for (int i = 0; i < seq[x].size() && i < seq[y].size(); ++i) {
+        int &u = seq[x][i], &v = seq[y][i];
+        if (rk[u] != rk[v]) {
+            flag = rk[u] < rk[v] ? -1 : 1;
+            break;
         }
-        if (mp[x].size() == mp[y].size()) {
-            return x < y;
+        int t = cmp(u, v);
+        if (t) {
+            flag = t;
+            break;
         }
-        return mp[x].size() < mp[y].size();
-    });
-    for (int i = 0; i < seq.size(); ++i) {
-        int y = seq[i];
-        ans[y] = i + 'a';
-        if (mp[x].size() < mp[y].size()) {
-            swap(mp[x], mp[y]);
+    }
+    if (flag) {
+        if (seq[x].size() == seq[x].size()) {
+            return flag;
         }
-        for (auto &[u, v] : mp[y]) {
-            mp[x][u] += v;
-        }
+        return seq[x].size() > seq[y].size() ? -1 : 1;
+    }
+    if (seq[x].size() == seq[x].size()) {
+        return x < y ? -1 : 1;
+    } else {
+        return seq[x].size() > seq[y].size() ? 1 : -1;
     }
 }
 
@@ -65,6 +64,7 @@ int main() {
         for (int i = 0; i <= n; ++i) {
             edge[i].clear();
             mp[i].clear();
+            seq[i].clear();
             key[i] = 0;
         }
         for (int i = 1; i <= n; ++i) {
@@ -80,18 +80,18 @@ int main() {
         }
         ans[n + 1] = 0;
         dfs(0);
+        for (int i = n; i >= 1; --i) {
+            auto &ve = seq[i];
+            sort(ve.begin(), ve.end(), [&](int &a, int &b) {
+                return cmp(a, b) < 0;
+            });
+            for (int j = 0; j < ve.size(); ++j) {
+                rk[ve[j]] = j;
+                ans[ve[j]] = j + 'a';
+            }
+        }
         cout << ans + 1 << endl;
     }
 
     return 0;
 }
-/*
-6 3
-0 1 2 2 1 5
-3 4 6
-
-6 4
-0 1 2 2 1  5
-3 4 6 5
-
-*/

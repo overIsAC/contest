@@ -22,6 +22,7 @@ const int mod = 7 + 1e9;
 const int N = 3 + 2e5;
 
 int n, k, a[N];
+int pow10[22];
 
 int calc(int n) {
     int len = 0;
@@ -32,18 +33,9 @@ int calc(int n) {
     return len;
 }
 
-LL qpow(LL q, LL n) {
-    LL ans = 1;
-    while (n) {
-        if (n & 1)
-            ans = ans * q;
-        n >>= 1;
-        q = q * q;
-    }
-    return ans;
-}
-
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
     cin >> n >> k;
     for (int i = 1; i <= n; ++i) {
         cin >> a[i];
@@ -52,15 +44,22 @@ int main() {
     map<int, int> mp[22];
     for (int i = 1; i <= n; ++i) {
         LL p = 10 % k;
-        for (int i = 1; i <= 10; ++i) {
-            ++mp[i][(k - p * a[i] % k) % k];
+        for (int j = 1; j <= 10; ++j) {
+            ++mp[j][(k - p * a[i] % k) % k];
             p = p * 10 % k;
         }
     }
+
+    pow10[0] = 1;
+    for (int i = 1; i <= 11; ++i) {
+        pow10[i] = (LL)pow10[i - 1] * 10 % k;
+    }
     for (int i = 1; i <= n; ++i) {
         int len = calc(a[i]);
-        ans += mp[len][a[i] % k];
-        if ((qpow(10, len) * a[i] + a[i]) % k == 0) {
+        if (mp[len].count(a[i] % k)) {
+            ans += mp[len][a[i] % k];
+        }
+        if (((LL)pow10[len] * a[i] + a[i]) % k == 0) {
             --ans;
         }
     }
