@@ -1,3 +1,4 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 using LL = long long;
@@ -28,31 +29,31 @@ int main() {
         for (int i = 0; i < n; ++i) {
             cin >> a[i];
         }
-        int ans = 1;
-        if (n <= 2) {
-            ans = n;
-        } else {
-            for (int i = 0; i < n; ++i) {
-                int res = 0;
-                for (int j = (i+ 1) % n; j != i; j = (j + 1) % n) {
-                    ++res;
-                    int k = (j + 1) % n;
-                    if (k != i && a[i] == a[k]) {
-                        j = k;
-                    }
-                }
-                ans = max(ans, res + 1);
+        map<int, int> mp;
+        for (auto &i : a) {
+            ++mp[i];
+        }
+        int one = 0;
+        for (auto [x, y] : mp) {
+            if (y == 1) {
+                one = 1;
             }
         }
-        cout << ans << endl;
+        if (one) {
+            cout << n << endl;
+            continue;
+        }
+        int flag = 0;
+        for (int i = 0; i < n; ++i) {
+            if (a[i] != a[(i + 2) % n]) {
+                flag = 1;
+            }
+        }
+        if (flag) {
+            cout << n << endl;
+        } else {
+            cout << n / 2 + 1 << endl;
+        }
     }
     return 0;
 }
-/*
-5
-3 1 2 1 2
-2
-1 2
-6
-1 2 1 2 1 2
-*/

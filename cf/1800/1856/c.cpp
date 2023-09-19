@@ -13,42 +13,50 @@ using PII = pair<int, int>;
 
 const int mod = 7 + 1e9;
 // const int mod = 998244353;
-const int N = 3 + 1e5;
+const int N = 3 + 1e3;
 
-int n, a[N];
-
-LL qpow(LL q, LL n) {
-    LL ans = 1;
-    while (n) {
-        if (n & 1) ans = ans * q;
-        n >>= 1;
-        q = q * q;
-    }
-    return ans;
-}
+int n, k, a[N];
 
 void solve() {
-    LL a, b, c, k;
-    cin >> a >> b >> c >> k;
-    LL down = qpow(10, a - 1);
-    LL up = qpow(10, a) - 1;
-    for (int i = down; i <= up; ++i) {
-        LL L = qpow(10, c - 1);
-        LL R = qpow(10, c) - 1;
-        L -= i;
-        R -= i;
-        L = max(L, qpow(10, b - 1));
-        R = min(R, qpow(10, b) - 1);
-        if (L <= R) {
-            if (k <= R - L + 1) {
-                cout << i << " + " << L + k - 1 << " = " << i + L + k - 1 << endl;
-                return;
-            } else {
-                k -= R - L + 1;
+    cin >> n >> k;
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+    }
+
+    auto ok = [&](int v) {
+        for (int i = 1; i <= n; ++i) {
+            if (a[i] >= v) {
+                return 1;
             }
         }
+        for (int i = 1; i <= n; ++i) {
+            int d = v - a[i];
+            if (d > k) {
+                continue;
+            }
+            for (int j = i + 1; j <= n; ++j) {
+                if (a[j] >= v - (j - i)) {
+                    return 1;
+                }
+                d += (v - (j - i)) - a[j];
+                if (d > k) {
+                    break;
+                }
+            }
+        }
+        return 0;
+    };
+
+    int l = 1, r = 2e8;
+    while (l < r) {
+        int mid = l + r + 1 >> 1;
+        if (ok(mid)) {
+            l = mid;
+        } else {
+            r = mid - 1;
+        }
     }
-    cout << -1 << endl;
+    cout << r << endl;
 }
 
 int main() {

@@ -11,52 +11,26 @@ const int mod = 7 + 1e9;
 const int N = 3 + 2e5;
 
 int n, a[N];
-int stk[N], top;
 LL pre[N];
-int ls[N], rs[N];
-bool ok;
-LL mn[N], mx[N];
-
-void dfs(int x) {
-    mn[x] = pre[x - 1];
-    mx[x] = pre[x];
-    if (ls[x]) {
-        dfs(ls[x]);
-        mn[x] = min(mn[x], mn[ls[x]]);
-    }
-    if (rs[x]) {
-        dfs(rs[x]);
-        mx[x] = max(mx[x], mx[rs[x]]);
-    }
-    if (a[x] + mn[x] < mx[x]) {
-        ok = false;
-    }
-}
 
 void solve() {
     for (int i = 1; i <= n; ++i) {
         pre[i] = pre[i - 1] + a[i];
     }
 
-    top = 0;
+    vector<int> ve;
     for (int i = 1; i <= n; ++i) {
-        ls[i] = rs[i] = 0;
-
-        int k = top;
-        while (k && a[stk[k]] < a[i]) --k;
-        if (k < top) ls[i] = stk[k + 1];
-        rs[stk[k]] = i;
-        stk[++k] = i;
-        top = k;
+        if (a[i] > 0) {
+            ve.push_back(i);
+        }
     }
-
-    ok = true;
-    dfs(rs[0]);
-
-    if (ok)
-        cout << "YES" << endl;
-    else
-        cout << "NO" << endl;
+    for (int i = 0; i + 1 < ve.size(); ++i) {
+        if (pre[ve[i + 1]] - pre[ve[i] - 1] > max(a[ve[i + 1]], a[ve[i]])) {
+            cout << "NO" << endl;
+            return;
+        }
+    }
+    cout << "YES" << endl;
 }
 
 int main() {
