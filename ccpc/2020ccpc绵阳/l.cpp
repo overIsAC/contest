@@ -18,7 +18,6 @@ const int mod = 7 + 1e9;
 const int N = 3 + 3e6;
 
 int n;
-map<int, int> mp;
 PII a[N];
 
 LL qpow(LL q, LL n) {

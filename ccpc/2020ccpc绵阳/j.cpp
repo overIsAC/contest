@@ -20,7 +20,6 @@ const int N = 3 + 2e5;
 int n, m;
 int a[N], b[N];
 vector<PII> ve[N];
-map<int, int> mp;
 
 struct Node {
     int l, r, v;

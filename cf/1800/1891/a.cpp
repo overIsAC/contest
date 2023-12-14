@@ -15,33 +15,32 @@ const int mod = 7 + 1e9;
 // const int mod = 998244353;
 const int N = 3 + 1e5;
 
-LL n;
-set<LL> st;
-map<LL, int> mp;
-
-LL dfs(LL n) {
-    if (n <= 1) {
-        return n;
+void solve() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto &i : a) {
+        cin >> i;
     }
-    if (mp.count(n)) {
-        return mp[n];
+    auto check = [&](int p) {
+        return p == (p & -p);
+    };
+    for (int i = 0; i + 1 < n; ++i) {
+        if (a[i] > a[i + 1]) {
+            if (!check(i + 1)) {
+                cout << "NO" << endl;
+                return;
+            }
+        }
     }
-    auto p = st.upper_bound(n);
-    --p;
-    return mp[n] = dfs(*p) + dfs()
+    cout << "YES" << endl;
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    for (LL i = 1; i <= 2e18; i = 2 * i + 1) {
-        st.insert(i);
-    }
     int T;
     cin >> T;
     while (T--) {
-        cin >> n;
-        cout << dfs(n) << endl;
+        solve();
     }
     return 0;
 }
