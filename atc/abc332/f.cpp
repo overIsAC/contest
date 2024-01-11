@@ -14,20 +14,35 @@ using ULL = unsigned long long;
 #define db(x)
 #endif
 
-const int mod = 7 + 1e9;
-// const int mod = 998244353;
+// const int mod = 7 + 1e9;
+const int mod = 998244353;
 const int N = 3 + 2e5;
 
 int n, q, a[N];
+LL inv[N];
 
 struct TreeNode {
     int l, r;
     LL a, b;
 } tr[N << 2];
 
+void down(int k) {
+    tr[lson].a = tr[lson].a * tr[k].a % mod;
+    tr[lson].b = tr[lson].b * tr[k].a % mod;
+    tr[lson].b = (tr[lson].b + tr[k].b) % mod;
+
+    tr[rson].a = tr[rson].a * tr[k].a % mod;
+    tr[rson].b = tr[rson].b * tr[k].a % mod;
+    tr[rson].b = (tr[rson].b + tr[k].b) % mod;
+
+    tr[k].a = 1;
+    tr[k].b = 0;
+}
+
 void build(int k, int l, int r) {
     tr[k].l = l;
     tr[k].r = r;
+    tr[k].a = 1;
     if (l == r) {
         tr[k].b = a[r];
         return;
@@ -37,63 +52,50 @@ void build(int k, int l, int r) {
     build(rson, mid + 1, r);
 }
 
-void update(int k, int l, int r, int len, int v) {
+void update(int k, int l, int r, int v) {
     if (l <= tr[k].l && tr[k].r <= r) {
+        tr[k].a = tr[k].a * inv[r - l + 1] % mod * (r - l) % mod;
+        tr[k].b = tr[k].b * inv[r - l + 1] % mod * (r - l) % mod;
+        tr[k].b = (tr[k].b + (LL)v * inv[r - l + 1]) % mod;
         return;
     }
+    down(k);
     int mid = tr[k].l + tr[k].r >> 1;
     if (l <= mid) {
-        update(lson, l, r, len, v);
+        update(lson, l, r, v);
     }
     if (r > mid) {
-        update(rson, l, r, len, v);
+        update(rson, l, r, v);
     }
 }
-TreeNode query(int k, int l, int r) {
-    if (l <= tr[k].l && tr[k].r <= r) {
-        return tr[k];
+void print(int k) {
+    if (tr[k].l == tr[k].r) {
+        cout << tr[k].b << ' ';
+        return;
     }
-    int mid = tr[k].l + tr[k].r >> 1;
-    if (l <= mid && mid < r) {
-        TreeNode ans;
-        up(ans, query(lson, l, r), query(rson, l, r));
-        return ans;
-    }
-    if (l <= mid) {
-        return query(lson, l, r);
-    } else {
-        return query(rson, l, r);
-    }
+    down(k);
+    print(lson);
+    print(rson);
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin >> n >> q;
-    cin >> s + 1;
-
-    p[0] = 1;
     for (int i = 1; i <= n; ++i) {
-        p[i] = p[i - 1] * 131 % mod;
+        cin >> a[i];
+    }
+
+    inv[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        inv[i] = (mod - mod / i) * inv[mod % i] % mod;
     }
 
     build(1, 1, n);
     while (q--) {
-        int op, l, r;
-        int x;
-        char c;
-        cin >> op;
-        if (op == 1) {
-            cin >> x >> c;
-            update(1, x, c);
-        } else {
-            cin >> l >> r;
-            auto ans = query(1, l, r);
-            if (ans.v1 == ans.v2) {
-                cout << "Yes\n";
-            } else {
-                cout << "No\n";
-            }
-        }
+        int l, r, v;
+        cin >> l >> r >> v;
+        update(1, l, r, v);
     }
+    print(1);
     return 0;
 }

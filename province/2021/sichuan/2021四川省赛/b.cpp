@@ -47,8 +47,8 @@ int main() {
         for (int i = 2; i <= n; ++i) {
             cout << ' ' << ans[i];
         }
-        // cout << endl;
-        cout << '\n';
+        cout << endl;
+        // cout << '\n';
     }
     return 0;
 }

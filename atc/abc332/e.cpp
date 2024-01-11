@@ -19,7 +19,7 @@ const int N = 3 + 1e5;
 
 int n, m;
 int w[N];
-double dp[1 << 16][15];
+double dp[1 << 16][16];
 int u[N];
 
 int main() {
@@ -29,8 +29,12 @@ int main() {
     }
     double sum = accumulate(w, w + n, 0.0) / m;
     for (int i = 0; i < 1 << n; ++i) {
-        for (int j = 0; j < n; ++j) {
+        for (int j = 0; j <= m; ++j) {
             dp[i][j] = 1e18;
+        }
+    }
+    for (int i = 0; i < 1 << n; ++i) {
+        for (int j = 0; j <n; ++j) {
             if (i >> j & 1) {
                 u[i] += w[j];
             }
@@ -38,7 +42,7 @@ int main() {
     }
     dp[0][0] = 0;
     for (int i = 0; i < 1 << n; ++i) {
-        for (int j = i; j; j = j & (j - 1)) {
+        for (int j = i; j; j = i & (j - 1)) {
             for (int k = 1; k <= m; ++k) {
                 dp[i][k] = min(dp[i][k],
                                dp[i ^ j][k - 1] + (u[j] - sum) * (u[j] - sum));
@@ -46,9 +50,6 @@ int main() {
         }
         for (int k = 1; k <= m; ++k) {
             dp[i][k] = min(dp[i][k], dp[i][k - 1] + sum * sum);
-        }
-        for (int j = 0; j <= m; ++j) {
-            cout << i << ' ' << j << ' ' << dp[i][j] << endl;
         }
     }
     double ans = dp[(1 << n) - 1][m] / m;
