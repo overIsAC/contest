@@ -1,54 +1,31 @@
-#include <bits/stdc++.h>
-using namespace std;
-using LL = long long;
-using PII = pair<int, int>;
+#include <algorithm>
+#include <cstdio>
 
-#define lson (k << 1)
-#define rson (k << 1 | 1)
-#if LEMON
-#define db(x) cout << "function " << __FUNCTION__ << ", line " << __LINE__ << " : " << #x << " " << x << endl;
-#else
-#define db(x)
-#endif
+const int maxT = 4000105;
 
-const int mod = 7 + 1e9;
-// const int mod = 998244353;
-const int N = 3 + 500;
-const int M = 5000 ;
-
-int n, m, t[N];
-LL preCnt[M], preWait[M];
-LL dp[M];
-
-LL calc(int l, int r) {
-    LL ans = preWait[r];
-    if (l > 0) {
-        ans -= preWait[l - 1];
-        ans -= preCnt[l - 1] * (r - l + 1);
-    }
-    return ans;
-}
+int n, m, t, ti, ans = 1e9, cnt[maxT], sum[maxT], f[maxT];
 
 int main() {
-    cin >> n >> m;
-    for (int i = 1; i <= n; ++i) {
-        cin >> t[i];
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= n; i++) {
+        scanf("%d", &ti);
+        t = std::max(t, ti);
+        cnt[ti]++;
+        sum[ti] += ti;
     }
-
-    for (int i = 1; i <= n; ++i) {
-        ++preCnt[t[i]];
-    }
-    for (int i = 1; i < M; ++i) {
-        preCnt[i] += preCnt[i - 1];
-        preWait[i] = preWait[i - 1] + preCnt[i];
-    }
-    memset(dp, 0x3f, sizeof(dp));
-    dp[0] = 0;
-    for (int i = 1; i < M; ++i) {
-        for (int j = 1; j <= n && i - j + 1 >= 1; ++j) {
-            dp[i] = min(dp[i], dp[i - j] + calc(i - j + 1, i));
+    for (int i = 1; i < t + m; i++) {
+        cnt[i] += cnt[i - 1];
+        sum[i] += sum[i - 1];
+    }  // 前缀和.
+    for (int i = 0; i < t + m; i++) {
+        f[i] = cnt[i] * i - sum[i];  // 特判边界情况.
+        for (int j = 0; j <= i - m; j++) {
+            f[i] = std::min(f[i], f[j] + (cnt[i] - cnt[j]) * i - (sum[i] - sum[j]));
         }
     }
-    cout << dp[M - 1] << endl;
+    for (int i = t; i < t + m; i++) {
+        ans = std::min(ans, f[i]);
+    }
+    printf("%d\n", ans);
     return 0;
 }
